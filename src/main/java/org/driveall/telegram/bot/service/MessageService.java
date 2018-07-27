@@ -5,7 +5,7 @@ public class MessageService {
         return "Курс НБУ:\n" +
                 CurrencyService.getNbuCurrencies() + "\n" +
                 "Курс битка:\n" +
-                CurrencyService.getBitcoinCurrency().floatValue() + "USD;";
+                CurrencyService.getBitcoinCurrency();
     }
 
     public static String weed() {

@@ -1,7 +1,9 @@
 package org.driveall.telegram.bot.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import org.driveall.telegram.bot.jsonEntity.Blockchain;
 import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,10 +41,10 @@ class CurrencyService {
         return out;
     }
 
-    static Double getBitcoinCurrency() {
+    static Blockchain getBitcoinCurrency() {
         String resp = sendBlockchainRequest();
         Map<String, LinkedTreeMap> allCurrencies = gson.fromJson(resp, Map.class);
-        LinkedTreeMap cur = allCurrencies.get("USD");
-        return (Double) cur.get("15m");
+        Blockchain cur = new ObjectMapper().findAndRegisterModules().convertValue(allCurrencies.get("USD"), Blockchain.class);
+        return cur;
     }
 }

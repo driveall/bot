@@ -1,5 +1,6 @@
 package org.driveall.telegram.bot.service;
 
+import org.driveall.telegram.bot.jsonEntity.Blockchain;
 import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class CurrencyServiceTest {
 
     @Test
     public void getBitcoinCurrencyTest() {
-        Double result = CurrencyService.getBitcoinCurrency();
+        Blockchain result = CurrencyService.getBitcoinCurrency();
         System.out.println(result);
     }
 

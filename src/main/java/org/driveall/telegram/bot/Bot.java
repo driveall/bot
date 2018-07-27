@@ -37,7 +37,9 @@ public class Bot extends TelegramLongPollingBot {
      */
     public void onUpdateReceived(Update update) {
         Message msg = update.getMessage();
-        String text = BotService.transformQueryIfValid(msg.getText().toLowerCase());
+
+        String text = msg.getText();
+        text = text != null ? BotService.transformQueryIfValid(text.toLowerCase()) : null;
 
         if (text != null) {
             System.out.println(new Timestamp(System.currentTimeMillis()).toString());

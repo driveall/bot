@@ -12,6 +12,7 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class Bot extends TelegramLongPollingBot {
@@ -48,6 +49,14 @@ public class Bot extends TelegramLongPollingBot {
                 sendMsg(update.getMessage(), MessageService.kurs());
             } else if (Processor.processWeed(text)) {
                 sendMsg(update.getMessage(), MessageService.weed());
+            } else if (!Processor.processWake(text).equals("error")) {
+                try {
+                    sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getUserName()));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             } else {
                 sendMsg(update.getMessage(), MessageService.info());
             }

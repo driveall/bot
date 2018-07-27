@@ -2,7 +2,10 @@ package org.driveall.telegram.bot.service;
 
 public class MessageService {
     public static String kurs() {
-        return "Курс НБУ:\n" + CurrencyService.getNbuCurrencies() + "\n" + "Курс битка:\n" + CurrencyService.getBitcoinCurrency().floatValue() + "USD;";
+        return "Курс НБУ:\n" +
+                CurrencyService.getNbuCurrencies() + "\n" +
+                "Курс битка:\n" +
+                CurrencyService.getBitcoinCurrency().floatValue() + "USD;";
     }
 
     public static String weed() {

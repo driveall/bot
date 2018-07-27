@@ -1,6 +1,9 @@
 package org.driveall.telegram.bot.service;
 
+import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.junit.Test;
+
+import java.util.List;
 
 public class CurrencyServiceTest {
 
@@ -19,6 +22,12 @@ public class CurrencyServiceTest {
     @Test
     public void getBitcoinCurrencyTest() {
         Double result = CurrencyService.getBitcoinCurrency();
+        System.out.println(result);
+    }
+
+    @Test
+    public void getNbuCurrenciesTest() {
+        List<Nbu> result = CurrencyService.getNbuCurrencies();
         System.out.println(result);
     }
 }

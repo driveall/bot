@@ -6,14 +6,13 @@ import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 class CurrencyService {
     private static final String NBU_CURRENCIES_JSON_URL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-    private static final String COINDESK_BITCOIN_TO_USD_JSON_URL = "https://blockchain.info/ticker";
+    private static final String COINDESK_BITCOIN_JSON_URL = "https://blockchain.info/ticker";
 
     private static final RestTemplate rest = new RestTemplate();
     private static final Gson gson = new Gson();
@@ -24,7 +23,7 @@ class CurrencyService {
     }
 
     static String sendBlockchainRequest() {
-        return rest.getForObject(URI.create(COINDESK_BITCOIN_TO_USD_JSON_URL), String.class);
+        return rest.getForObject(URI.create(COINDESK_BITCOIN_JSON_URL), String.class);
     }
 
     //data receivers
@@ -42,7 +41,7 @@ class CurrencyService {
 
     static Double getBitcoinCurrency() {
         String resp = sendBlockchainRequest();
-        Map<String, LinkedTreeMap> allCurrencies = gson.fromJson(resp, HashMap.class);
+        Map<String, LinkedTreeMap> allCurrencies = gson.fromJson(resp, Map.class);
         LinkedTreeMap cur = allCurrencies.get("USD");
         return (Double) cur.get("15m");
     }

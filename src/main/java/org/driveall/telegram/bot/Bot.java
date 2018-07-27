@@ -1,7 +1,6 @@
 package org.driveall.telegram.bot;
 
-import org.driveall.telegram.bot.processor.KursProcessor;
-import org.driveall.telegram.bot.processor.WeedProcessor;
+import org.driveall.telegram.bot.processor.Processor;
 import org.driveall.telegram.bot.service.BotService;
 import org.driveall.telegram.bot.service.LogService;
 import org.driveall.telegram.bot.service.MessageService;
@@ -45,9 +44,9 @@ public class Bot extends TelegramLongPollingBot {
             System.out.println(new Timestamp(System.currentTimeMillis()).toString());
             System.out.println(LogService.incomingMsg(text, msg.getChat().getTitle()));
 
-            if (KursProcessor.process(text)) {
+            if (Processor.processKurs(text)) {
                 sendMsg(update.getMessage(), MessageService.kurs());
-            } else if (WeedProcessor.process(text)) {
+            } else if (Processor.processWeed(text)) {
                 sendMsg(update.getMessage(), MessageService.weed());
             } else {
                 sendMsg(update.getMessage(), MessageService.info());

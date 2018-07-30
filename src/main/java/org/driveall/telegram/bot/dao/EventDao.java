@@ -19,7 +19,7 @@ public class EventDao {
 
     public static void add(Event e) throws ClassNotFoundException, SQLException {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            st.executeUpdate("INSERT INTO event VALUES ('" + e.getId() + "', '" + e.getDate() + "', '" + e.getDescription() + "')");
+            st.executeUpdate("INSERT INTO event VALUES ('" + e.getId() + "', '" + e.getDate() + "', '" + e.getDescription() + "', '" + e.getNum() + "')");
         }
     }
 
@@ -38,7 +38,8 @@ public class EventDao {
                 Event evt = new Event(
                         rs.getString("id"),
                         d,
-                        rs.getString("description"));
+                        rs.getString("description"),
+                        rs.getInt("num"));
                 out.add(evt);
             }
         }

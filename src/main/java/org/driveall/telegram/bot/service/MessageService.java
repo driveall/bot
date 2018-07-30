@@ -8,7 +8,6 @@ import org.driveall.telegram.bot.entity.Wake;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,10 +26,12 @@ public class MessageService {
     }
 
     public static String wake(String msg, String username) throws SQLException, ClassNotFoundException {
+
         if (msg.equals("unsubscribe")) {
             WakeDao.removeByUsername(username);
             return username + ", you were unsubscribed from all events;";
         }
+
         if (msg.startsWith("create ")) {
             msg = msg.substring(7);
             LocalDateTime ldt = LocalDateTime.of(
@@ -39,16 +40,24 @@ public class MessageService {
                     parseInt(msg.substring(8, 10)),
                     parseInt(msg.substring(11)),
                     0);
-            Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(ldt), "wakeboarding");
+            List<Event> evts = EventDao.get();
+            int num = 0;
+            for (Event evt : evts) {
+                if (evt.getNum() > num) {
+                    num = evt.getNum();
+                }
+            }
+            Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(ldt), "wakeboarding", num + 1);
             EventDao.add(evt);
-            return "Event on " + Timestamp.valueOf(ldt) + " created;";
+            return "Event #" + evt.getNum() + " on " + Timestamp.valueOf(ldt) + " created;";
         }
         List<Event> evts = EventDao.get();
+
         if (msg.equals("info")) {
             List<Wake> wks = WakeDao.get();
             String out = "EVENTS:\n";
             for (Event evt : evts) {
-                out += "Event on " + evt.getDate() + ":\n";
+                out += evt.getNum() + ") Event '" + evt.getDescription() + "' on " + evt.getDate() + ":\n";
                 for (Wake w : wks) {
                     if (w.getEvtid().equals(evt.getId())) {
                         out += "  " + w.getName() + ";\n";
@@ -57,6 +66,7 @@ public class MessageService {
             }
             return out;
         }
+
         if (msg.equals("subscribe")) {
             Event evt = null;
             if (evts.size() > 0) {
@@ -73,20 +83,22 @@ public class MessageService {
             if (evt != null) {
                 Wake w = new Wake(UUID.randomUUID().toString(), evt.getId(), username);
                 WakeDao.add(w);
-                return username + ", you are subscribed on event on " + evt.getDate().toString() + ';';
+                return username + ", you are subscribed on event '" + evt.getDescription() + "' on " + evt.getDate().toString() + ';';
             }
         }
-        if (msg.startsWith("dateSubscribe ")) {
-            msg = msg.substring(14);
-            Date d = new Date(Long.parseLong(msg));
+
+        if (msg.startsWith("numSubscribe ")) {
+            msg = msg.substring(13);
+            int evtNum = Integer.parseInt(msg);
             for (Event e : evts) {
-                if (d.equals(e.getDate())) {
+                if (e.getNum() == evtNum) {
                     Wake w = new Wake(UUID.randomUUID().toString(), e.getId(), username);
                     WakeDao.add(w);
-                    return username + ", you are subscribed on event on " + e.getDate().toString() + ';';
+                    return username + ", you are subscribed on event #" + e.getNum() + " on " + e.getDate().toString() + ';';
                 }
             }
         }
+
         return "No events available;";
     }
 
@@ -97,9 +109,9 @@ public class MessageService {
                 "COMMANDS:\n" +
                 "'kurs' or 'курс' - currencies of (USD, EUR and JPY to UAH) and (BTC to USD);\n\n" +
                 "'wake' or 'вейк' - info about waking calendar;\n" +
-                "'wake +' - schedule on waking on nearest date-time;\n" +
-                "'wake + 'YYYY' 'MM' 'DD' 'HH'' - schedule on waking on specified date-time;\n" +
-                "'wake -' - unsubscribe your all wakings;\n" +
+                "'wake +' - schedule on waking on nearest event;\n" +
+                "'wake + 'EVENT_NUMBER'' - schedule on waking on specified event by number;\n" +
+                "'wake -' - unsubscribe all your wakings;\n" +
                 "'wake create 'YYYY' 'MM' 'DD' 'HH'' - create a wake event;\n\n" +
                 "";
     }

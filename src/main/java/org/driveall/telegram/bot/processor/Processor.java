@@ -1,7 +1,5 @@
 package org.driveall.telegram.bot.processor;
 
-import org.driveall.telegram.bot.service.ProcessorService;
-
 public class Processor {
     private static final String ERROR = "error";
 
@@ -22,18 +20,20 @@ public class Processor {
             text = text.substring(1);
             if (text.startsWith("create") && text.length() > 6) {
                 text = text.substring(7);
-                String date = ProcessorService.getDate(text);
-                if (date == null) return ERROR;
-                return "create " + date;
+                if (text.length() == 0) return ERROR;
+                return "create " + text;
             }
             if (text.startsWith("+")) {
                 if (text.length() == 1) {
                     return "subscribe";
                 }
                 text = text.substring(2);
-                String date = ProcessorService.getDate(text);
-                if (date == null) return ERROR;
-                return "dateSubscribe " + date;
+                try {
+                    int evtNum = Integer.parseInt(text);
+                    return "numSubscribe " + evtNum;
+                } catch (Exception e) {
+                    return ERROR;
+                }
             }
             if (text.startsWith("-") && text.length() == 1) {
                 return "unsubscribe";

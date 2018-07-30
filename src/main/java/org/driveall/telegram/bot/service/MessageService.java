@@ -107,12 +107,12 @@ public class MessageService {
                 "All commands are case insensitive;\n" +
                 "To call bot begin message with: '/d ', '/dd ', '/д ', '/дд ';\n" +
                 "COMMANDS:\n" +
-                "'kurs' or 'курс' - currencies of (USD, EUR and JPY to UAH) and (BTC to USD);\n\n" +
-                "'wake' or 'вейк' - info about waking calendar;\n" +
-                "'wake +' - schedule on waking on nearest event;\n" +
-                "'wake + 'EVENT_NUMBER'' - schedule on waking on specified event by number;\n" +
-                "'wake -' - unsubscribe all your wakings;\n" +
-                "'wake create 'YYYY' 'MM' 'DD' 'HH'' - create a wake event;\n\n" +
+                "1) 'kurs' or 'курс' - currencies of (USD, EUR and JPY to UAH) and (BTC to USD);\n\n" +
+                "2) 'wake' or 'вейк' - info about waking calendar;\n" +
+                "     'wake +' - schedule on waking on nearest event;\n" +
+                "     'wake + 'EVENT_NUMBER'' - schedule on waking on specified event by number;\n" +
+                "     'wake -' - unsubscribe all your wakings;\n" +
+                "     'wake create 'YYYY' 'MM' 'DD' 'HH'' - create a wake event;\n\n" +
                 "";
     }
 }

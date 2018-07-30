@@ -12,7 +12,6 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class Bot extends TelegramLongPollingBot {
@@ -52,10 +51,8 @@ public class Bot extends TelegramLongPollingBot {
             } else if (!Processor.processWake(text).equals("error")) {
                 try {
                     sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getFirstName()));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("error sending message to telegram, stacktrace:\n" + e);
                 }
             } else {
                 sendMsg(update.getMessage(), MessageService.info());

@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static java.lang.Integer.parseInt;
-
 public class MessageService {
     public static String kurs() {
         return "Курс НБУ:\n" +
@@ -28,30 +26,20 @@ public class MessageService {
     public static String wake(String msg, String username) throws SQLException, ClassNotFoundException {
 
         if (msg.equals("unsubscribe")) {
-            WakeDao.removeByUsername(username);
+            WakeService.unsubscribeUser(username);
             return username + ", you were unsubscribed from all events;";
         }
 
         if (msg.startsWith("create ")) {
             msg = msg.substring(7);
-            LocalDateTime ldt = LocalDateTime.of(
-                    parseInt(msg.substring(0, 4)),
-                    parseInt(msg.substring(5, 7)),
-                    parseInt(msg.substring(8, 10)),
-                    parseInt(msg.substring(11)),
-                    0);
-            List<Event> evts = EventDao.get();
-            int num = 0;
-            for (Event evt : evts) {
-                if (evt.getNum() > num) {
-                    num = evt.getNum();
-                }
-            }
-            Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(ldt), "wakeboarding", num + 1);
-            EventDao.add(evt);
-            return "Event #" + evt.getNum() + " on " + Timestamp.valueOf(ldt) + " created;";
+            LocalDateTime ldt = WakeService.parseEventDate(msg);
+            int nextEventNumber = WakeService.getNextEventNumber();
+            WakeService.createEvent(ldt, nextEventNumber);
+            return "Event #" + nextEventNumber + " on " + Timestamp.valueOf(ldt) + " created;";
         }
+
         List<Event> evts = EventDao.get();
+        WakeService.removeOldEvents(evts);
 
         if (msg.equals("info")) {
             List<Wake> wks = WakeDao.get();
@@ -60,7 +48,7 @@ public class MessageService {
                 out += evt.getNum() + ") Event '" + evt.getDescription() + "' on " + evt.getDate() + ":\n";
                 for (Wake w : wks) {
                     if (w.getEvtid().equals(evt.getId())) {
-                        out += "  " + w.getName() + ";\n";
+                        out += "   " + w.getName() + ";\n";
                     }
                 }
             }

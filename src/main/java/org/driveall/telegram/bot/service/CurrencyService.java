@@ -19,16 +19,17 @@ class CurrencyService {
     private static final RestTemplate rest = new RestTemplate();
     private static final Gson gson = new Gson();
 
-    //request senders
+    //NBU request sender
     static String sendNbuRequest() {
         return rest.getForObject(URI.create(NBU_CURRENCIES_JSON_URL), String.class);
     }
 
+    //BLOCKCHAIN request sender
     static String sendBlockchainRequest() {
         return rest.getForObject(URI.create(COINDESK_BITCOIN_JSON_URL), String.class);
     }
 
-    //data receivers
+    //NBU currencies receiver
     static List<Nbu> getNbuCurrencies() {
         String resp = sendNbuRequest();
         Nbu[] allCurrencies = gson.fromJson(resp, Nbu[].class);
@@ -41,10 +42,10 @@ class CurrencyService {
         return out;
     }
 
+    //BLOCKCHAIN bitcoin currency receiver
     static Blockchain getBitcoinCurrency() {
         String resp = sendBlockchainRequest();
         Map<String, LinkedTreeMap> allCurrencies = gson.fromJson(resp, Map.class);
-        Blockchain cur = new ObjectMapper().findAndRegisterModules().convertValue(allCurrencies.get("USD"), Blockchain.class);
-        return cur;
+        return new ObjectMapper().findAndRegisterModules().convertValue(allCurrencies.get("USD"), Blockchain.class);
     }
 }

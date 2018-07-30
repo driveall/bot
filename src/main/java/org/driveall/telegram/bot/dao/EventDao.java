@@ -3,8 +3,8 @@ package org.driveall.telegram.bot.dao;
 import org.driveall.telegram.bot.entity.Event;
 
 import java.sql.*;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventDao {
     private static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -30,7 +30,7 @@ public class EventDao {
     }
 
     public static List<Event> get() throws SQLException, ClassNotFoundException {
-        List<Event> out = new LinkedList<>();
+        List<Event> out = new CopyOnWriteArrayList<>();
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
             ResultSet rs = st.executeQuery("SELECT * FROM event");
             while (rs.next()) {

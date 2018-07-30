@@ -31,6 +31,9 @@ public class MessageService {
         }
 
         if (msg.startsWith("create ")) {
+            if (!"Алексей".equals(username)) {
+                return "You have not permissions to create an event (only boat owner can create it)";
+            }
             msg = msg.substring(7);
             LocalDateTime ldt = WakeService.parseEventDate(msg);
             int nextEventNumber = WakeService.getNextEventNumber();

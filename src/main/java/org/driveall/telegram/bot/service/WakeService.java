@@ -43,7 +43,11 @@ class WakeService {
     }
 
     static void removeOldEvents(List<Event> events) {
-
+        for (Event e : events) {
+            if (e.getDate().before(Timestamp.valueOf(LocalDateTime.now()))) {
+                events.remove(e);
+            }
+        }
     }
 
 }

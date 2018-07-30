@@ -42,4 +42,8 @@ public class Processor {
         }
         return ERROR;
     }
+
+    public static boolean init(String text) {
+        return ("/d".equals(text) || "/dd".equals(text) || "/д".equals(text) || "/дд".equals(text));
+    }
 }

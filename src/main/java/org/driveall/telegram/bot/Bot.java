@@ -36,35 +36,47 @@ public class Bot extends TelegramLongPollingBot {
      */
     public void onUpdateReceived(Update update) {
         Message msg = update.getMessage();
+        String text = msg.getText().toLowerCase();
 
-        String text = msg.getText();
-
-        if ("/d".equals(text) || "/dd".equals(text) || "/д".equals(text) || "/дд".equals(text)) {
+        //info
+        if (Processor.init(text)) {
             sendMsg(update.getMessage(), MessageService.info());
-        } else {
-
-            text = text != null ? BotService.transformQueryIfValid(text.toLowerCase()) : null;
-
-            if (text != null) {
-                System.out.println(new Timestamp(System.currentTimeMillis()).toString());
-                System.out.println(LogService.incomingMsg(text, msg.getChat().getTitle()));
-
-                if (Processor.processKurs(text)) {
-                    sendMsg(update.getMessage(), MessageService.kurs());
-                } else if (Processor.processWeed(text)) {
-                    sendMsg(update.getMessage(), MessageService.weed());
-                } else if (!Processor.processWake(text).equals("error")) {
-                    try {
-                        sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getFirstName()));
-                    } catch (Exception e) {
-                        System.out.println("error sending message to telegram, stacktrace:");
-                        e.printStackTrace();
-                    }
-                } else {
-                    sendMsg(update.getMessage(), MessageService.info());
-                }
-            }
+            return;
         }
+
+        text = BotService.transformQueryIfValid(text);
+
+        if (text != null) {
+            System.out.println(new Timestamp(System.currentTimeMillis()).toString());
+            System.out.println(LogService.incomingMsg(text, msg.getChat().getTitle()));
+
+            //for kurs query
+            if (Processor.processKurs(text)) {
+                sendMsg(update.getMessage(), MessageService.kurs());
+                return;
+            }
+
+            //for weed query
+            if (Processor.processWeed(text)) {
+                sendMsg(update.getMessage(), MessageService.weed());
+                return;
+            }
+
+            //for wake query
+            if (!Processor.processWake(text).equals("error")) {
+                try {
+                    sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getFirstName()));
+                } catch (Exception e) {
+                    System.out.println("error sending message to telegram, stacktrace:");
+                    e.printStackTrace();
+                }
+                return;
+            }
+
+            //info
+            sendMsg(update.getMessage(), MessageService.info());
+        }
+
     }
 
     /**

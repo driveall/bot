@@ -19,20 +19,20 @@ public class EventDao {
 
     public static void add(Event e) throws ClassNotFoundException, SQLException {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            st.executeUpdate("INSERT INTO event VALUES ('" + e.getId() + "', '" + e.getDate() + "', '" + e.getDescription() + "', '" + e.getNum() + "')");
+            st.executeUpdate("INSERT INTO bot_event VALUES ('" + e.getId() + "', '" + e.getDate() + "', '" + e.getDescription() + "', '" + e.getNum() + "')");
         }
     }
 
     public static void remove(String id) throws SQLException, ClassNotFoundException {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            st.executeUpdate("DELETE FROM event WHERE id='" + id + "'");
+            st.executeUpdate("DELETE FROM bot_event WHERE id='" + id + "'");
         }
     }
 
     public static List<Event> get() throws SQLException, ClassNotFoundException {
         List<Event> out = new CopyOnWriteArrayList<>();
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            ResultSet rs = st.executeQuery("SELECT * FROM event");
+            ResultSet rs = st.executeQuery("SELECT * FROM bot_event");
             while (rs.next()) {
                 Timestamp d = rs.getTimestamp("date");
                 Event evt = new Event(

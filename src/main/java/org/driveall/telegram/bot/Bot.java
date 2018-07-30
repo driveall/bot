@@ -51,7 +51,7 @@ public class Bot extends TelegramLongPollingBot {
                 sendMsg(update.getMessage(), MessageService.weed());
             } else if (!Processor.processWake(text).equals("error")) {
                 try {
-                    sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getUserName()));
+                    sendMsg(update.getMessage(), MessageService.wake(Processor.processWake(text), update.getMessage().getFrom().getFirstName()));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {

@@ -3,8 +3,6 @@ package org.driveall.telegram.bot.dao;
 import org.driveall.telegram.bot.entity.Event;
 
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,11 +34,10 @@ public class EventDao {
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
             ResultSet rs = st.executeQuery("SELECT * FROM event");
             while (rs.next()) {
-                Date d = rs.getDate("date");
-                LocalDateTime ldt = LocalDateTime.of(d.getYear(), d.getMonth(), d.getDay(), 0, 0);
+                Timestamp d = rs.getTimestamp("date");
                 Event evt = new Event(
                         rs.getString("id"),
-                        ldt,
+                        d,
                         rs.getString("description"));
                 out.add(evt);
             }

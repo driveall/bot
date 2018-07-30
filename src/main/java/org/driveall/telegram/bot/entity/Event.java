@@ -2,17 +2,17 @@ package org.driveall.telegram.bot.entity;
 
 import com.google.common.base.Objects;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class Event {
     private String id;
-    private LocalDateTime date;
+    private Timestamp date;
     private String description;
 
     public Event() {
     }
 
-    public Event(String id, LocalDateTime date, String description) {
+    public Event(String id, Timestamp date, String description) {
         this.id = id;
         this.date = date;
         this.description = description;
@@ -26,11 +26,11 @@ public class Event {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

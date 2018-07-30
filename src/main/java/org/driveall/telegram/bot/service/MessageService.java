@@ -6,6 +6,7 @@ import org.driveall.telegram.bot.entity.Event;
 import org.driveall.telegram.bot.entity.Wake;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -32,22 +33,22 @@ public class MessageService {
         }
         if (msg.startsWith("create ")) {
             msg = msg.substring(7);
-            LocalDateTime d = LocalDateTime.of(
+            LocalDateTime ldt = LocalDateTime.of(
                     parseInt(msg.substring(0, 4)),
                     parseInt(msg.substring(5, 7)),
                     parseInt(msg.substring(8, 10)),
                     parseInt(msg.substring(11)),
                     0);
-            Event evt = new Event(UUID.randomUUID().toString(), d, "wakeboarding");
+            Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(ldt), "wakeboarding");
             EventDao.add(evt);
-            return "Event on " + d.toString() + " created;";
+            return "Event on " + Timestamp.valueOf(ldt) + " created;";
         }
         List<Event> evts = EventDao.get();
         if (msg.equals("info")) {
             List<Wake> wks = WakeDao.get();
             String out = "EVENTS:\n";
             for (Event evt : evts) {
-                out += "Event on " + evt.getDate().toString() + ":\n";
+                out += "Event on " + evt.getDate() + ":\n";
                 for (Wake w : wks) {
                     if (w.getEvtid().equals(evt.getId())) {
                         out += "  " + w.getName() + ";\n";
@@ -64,7 +65,7 @@ public class MessageService {
                         evt = e;
                         continue;
                     }
-                    if (evt.getDate().isAfter(e.getDate())) {
+                    if (evt.getDate().toLocalDateTime().isAfter(e.getDate().toLocalDateTime())) {
                         evt = e;
                     }
                 }

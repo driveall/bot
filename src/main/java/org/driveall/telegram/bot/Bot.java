@@ -73,6 +73,17 @@ public class Bot extends TelegramLongPollingBot {
                 return;
             }
 
+            //for travel query
+            if (!Processor.processTravel(text).equals("error")) {
+                try {
+                    sendMsg(update.getMessage(), MessageService.travel(Processor.processTravel(text), update.getMessage().getFrom().getFirstName()));
+                } catch (Exception e) {
+                    System.out.println("error sending message to telegram, stacktrace:");
+                    e.printStackTrace();
+                }
+                return;
+            }
+
             //info
             sendMsg(update.getMessage(), MessageService.info());
         }

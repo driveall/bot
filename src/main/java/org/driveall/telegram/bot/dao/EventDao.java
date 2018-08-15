@@ -29,10 +29,27 @@ public class EventDao {
         }
     }
 
-    public static List<Event> get() throws SQLException, ClassNotFoundException {
+    public static List<Event> getWake() throws SQLException, ClassNotFoundException {
         List<Event> out = new CopyOnWriteArrayList<>();
         try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            ResultSet rs = st.executeQuery("SELECT * FROM bot_event");
+            ResultSet rs = st.executeQuery("SELECT * FROM bot_event WHERE description='wakeboarding'");
+            while (rs.next()) {
+                Timestamp d = rs.getTimestamp("date");
+                Event evt = new Event(
+                        rs.getString("id"),
+                        d,
+                        rs.getString("description"),
+                        rs.getInt("num"));
+                out.add(evt);
+            }
+        }
+        return out;
+    }
+
+    public static List<Event> getTravel() throws SQLException, ClassNotFoundException {
+        List<Event> out = new CopyOnWriteArrayList<>();
+        try (Connection c = getConnection(); Statement st = c.createStatement()) {
+            ResultSet rs = st.executeQuery("SELECT * FROM bot_event WHERE description!='wakeboarding'");
             while (rs.next()) {
                 Timestamp d = rs.getTimestamp("date");
                 Event evt = new Event(

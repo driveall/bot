@@ -26,9 +26,17 @@ class WakeService {
                 0);
     }
 
-    static int getNextEventNumber() throws SQLException, ClassNotFoundException {
+    static int getNextEventNumber(String type) throws SQLException, ClassNotFoundException {
         int num = 0;
-        List<Event> evts = EventDao.get();
+        List<Event> evts = null;
+        switch (type) {
+            case "w":
+                evts = EventDao.getWake();
+                break;
+            case "t":
+                evts = EventDao.getTravel();
+                break;
+        }
         for (Event evt : evts) {
             if (evt.getNum() > num) {
                 num = evt.getNum();
@@ -37,8 +45,8 @@ class WakeService {
         return num + 1;
     }
 
-    static void createEvent(LocalDateTime date, int number) throws SQLException, ClassNotFoundException {
-        Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(date), "wakeboarding", number);
+    static void createEvent(LocalDateTime date, int number, String type) throws SQLException, ClassNotFoundException {
+        Event evt = new Event(UUID.randomUUID().toString(), Timestamp.valueOf(date), type, number);
         EventDao.add(evt);
     }
 

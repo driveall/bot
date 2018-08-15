@@ -14,31 +14,43 @@ public class Processor {
     public static String processWake(String text) {
         if (text.startsWith("wake") || text.startsWith("вейк")) {
             text = text.substring(4);
-            if (text.isEmpty()) {
-                return "info";
+            return process(text);
+        }
+        return ERROR;
+    }
+
+    public static String processTravel(String text) {
+        if (text.startsWith("travel")) {
+            text = text.substring(6);
+            return process(text);
+        }
+        return ERROR;
+    }
+
+    private static String process(String text) {
+        if (text.isEmpty()) {
+            return "info";
+        }
+        text = text.substring(1);
+        if (text.startsWith("create") && text.length() > 6) {
+            text = text.substring(7);
+            if (text.length() == 0) return ERROR;
+            return "create " + text;
+        }
+        if (text.startsWith("+")) {
+            if (text.length() == 1) {
+                return "subscribe";
             }
-            text = text.substring(1);
-            if (text.startsWith("create") && text.length() > 6) {
-                text = text.substring(7);
-                if (text.length() == 0) return ERROR;
-                return "create " + text;
+            text = text.substring(2);
+            try {
+                int evtNum = Integer.parseInt(text);
+                return "numSubscribe " + evtNum;
+            } catch (Exception e) {
+                return ERROR;
             }
-            if (text.startsWith("+")) {
-                if (text.length() == 1) {
-                    return "subscribe";
-                }
-                text = text.substring(2);
-                try {
-                    int evtNum = Integer.parseInt(text);
-                    return "numSubscribe " + evtNum;
-                } catch (Exception e) {
-                    return ERROR;
-                }
-            }
-            if (text.startsWith("-") && text.length() == 1) {
-                return "unsubscribe";
-            }
-            return ERROR;
+        }
+        if (text.startsWith("-") && text.length() == 1) {
+            return "unsubscribe";
         }
         return ERROR;
     }

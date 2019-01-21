@@ -1,8 +1,10 @@
 package org.driveall.telegram.bot.service;
 
 import org.driveall.telegram.bot.dao.EventDao;
+import org.driveall.telegram.bot.dao.TravelDao;
 import org.driveall.telegram.bot.dao.WakeDao;
 import org.driveall.telegram.bot.entity.Event;
+import org.driveall.telegram.bot.entity.Travel;
 import org.driveall.telegram.bot.entity.Wake;
 
 import java.sql.SQLException;
@@ -25,11 +27,13 @@ public class MessageService {
 
     public static String wake(String msg, String username) throws SQLException, ClassNotFoundException {
 
+        //Unsubscribe from all wake events
         if (msg.equals("unsubscribe")) {
             WakeService.unsubscribeUser(username);
             return username + ", you were unsubscribed from all wake events;";
         }
 
+        //Create new wake event
         if (msg.startsWith("create ")) {
             if (!"Алексей".equals(username)) {
                 return "You have not permissions to create a wake event (only boat owner can create it)";
@@ -44,33 +48,24 @@ public class MessageService {
         List<Event> evts = EventDao.getWake();
         WakeService.removeOldEvents(evts);
 
+        //Info about future wake events
         if (msg.equals("info")) {
             List<Wake> wks = WakeDao.get();
-            String out = "WAKE EVENTS:\n";
+            StringBuilder out = new StringBuilder("WAKE EVENTS:\n");
             for (Event evt : evts) {
-                out += evt.getNum() + ") Event '" + evt.getDescription() + "' on " + evt.getDate() + ":\n";
+                out.append(evt.getNum()).append(") Wake event '").append(evt.getDescription()).append("' on ").append(evt.getDate()).append(":\n");
                 for (Wake w : wks) {
                     if (w.getEvtid().equals(evt.getId())) {
-                        out += "   " + w.getName() + ";\n";
+                        out.append("   ").append(w.getName()).append(";\n");
                     }
                 }
             }
-            return out;
+            return out.toString();
         }
 
+        //Subscribe to nearest wake event
         if (msg.equals("subscribe")) {
-            Event evt = null;
-            if (evts.size() > 0) {
-                for (Event e : evts) {
-                    if (evt == null) {
-                        evt = e;
-                        continue;
-                    }
-                    if (evt.getDate().toLocalDateTime().isAfter(e.getDate().toLocalDateTime())) {
-                        evt = e;
-                    }
-                }
-            }
+            Event evt = getEvent(evts);
             if (evt != null) {
                 Wake w = new Wake(UUID.randomUUID().toString(), evt.getId(), username);
                 WakeDao.add(w);
@@ -91,6 +86,22 @@ public class MessageService {
         }
 
         return "No events available;";
+    }
+
+    private static Event getEvent(List<Event> evts) {
+        Event evt = null;
+        if (evts.size() > 0) {
+            for (Event e : evts) {
+                if (evt == null) {
+                    evt = e;
+                    continue;
+                }
+                if (evt.getDate().toLocalDateTime().isAfter(e.getDate().toLocalDateTime())) {
+                    evt = e;
+                }
+            }
+        }
+        return evt;
     }
 
     public static String travel(String msg, String username) throws SQLException, ClassNotFoundException {
@@ -118,35 +129,24 @@ public class MessageService {
         WakeService.removeOldEvents(evts);
 
         if (msg.equals("info")) {
-            List<Wake> wks = WakeDao.get();
-            String out = "TRAVEL EVENTS:\n";
+            List<Travel> trvls = TravelDao.get();
+            StringBuilder out = new StringBuilder("TRAVEL EVENTS:\n");
             for (Event evt : evts) {
-                out += evt.getNum() + ") Event '" + evt.getDescription() + "' on " + evt.getDate() + ":\n";
-                for (Wake w : wks) {
-                    if (w.getEvtid().equals(evt.getId())) {
-                        out += "   " + w.getName() + ";\n";
+                out.append(evt.getNum()).append(") Travel event '").append(evt.getDescription()).append("' on ").append(evt.getDate()).append(":\n");
+                for (Travel t : trvls) {
+                    if (t.getEvtid().equals(evt.getId())) {
+                        out.append("   ").append(t.getName()).append(";\n");
                     }
                 }
             }
-            return out;
+            return out.toString();
         }
 
         if (msg.equals("subscribe")) {
-            Event evt = null;
-            if (evts.size() > 0) {
-                for (Event e : evts) {
-                    if (evt == null) {
-                        evt = e;
-                        continue;
-                    }
-                    if (evt.getDate().toLocalDateTime().isAfter(e.getDate().toLocalDateTime())) {
-                        evt = e;
-                    }
-                }
-            }
+            Event evt = getEvent(evts);
             if (evt != null) {
-                Wake w = new Wake(UUID.randomUUID().toString(), evt.getId(), username);
-                WakeDao.add(w);
+                Travel t = new Travel(UUID.randomUUID().toString(), evt.getId(), username);
+                TravelDao.add(t);
                 return username + ", you are subscribed on event '" + evt.getDescription() + "' on " + evt.getDate().toString() + ';';
             }
         }
@@ -156,8 +156,8 @@ public class MessageService {
             int evtNum = Integer.parseInt(msg);
             for (Event e : evts) {
                 if (e.getNum() == evtNum) {
-                    Wake w = new Wake(UUID.randomUUID().toString(), e.getId(), username);
-                    WakeDao.add(w);
+                    Travel t = new Travel(UUID.randomUUID().toString(), e.getId(), username);
+                    TravelDao.add(t);
                     return username + ", you are subscribed on event #" + e.getNum() + " on " + e.getDate().toString() + ';';
                 }
             }

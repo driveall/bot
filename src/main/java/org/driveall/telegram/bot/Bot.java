@@ -12,11 +12,33 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
+import java.util.Properties;
 
 public class Bot extends TelegramLongPollingBot {
-    private static final String BOT_TOKEN = "669371245:AAFVuryUiTeEiX7P95pKxBjePrwe4_Iyj4w";
-    public static final String BOT_USERNAME = "DriveallBot";
+    private static final String BOT_TOKEN;
+    public static final String BOT_USERNAME;
+
+    static {
+        Properties prop = new Properties();
+        String token = null;
+        String name = null;
+        try (InputStream input = new FileInputStream("src\\main\\resources\\application.properties")) {
+            // load a properties file
+            prop.load(input);
+            // get nbu and bitcoin urls
+            token = prop.getProperty("botToken");
+            name = prop.getProperty("botUsername");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        BOT_TOKEN = token;
+        BOT_USERNAME = name;
+    }
 
     public static void main(String[] args) {
         ApiContextInitializer.init();

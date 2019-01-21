@@ -7,25 +7,47 @@ import org.driveall.telegram.bot.jsonEntity.Blockchain;
 import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 class CurrencyService {
-    private static final String NBU_CURRENCIES_JSON_URL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-    private static final String COINDESK_BITCOIN_JSON_URL = "https://blockchain.info/ticker";
+    private static final String NBU_CURRENCIES_JSON_URL;
+    private static final String COINDESK_BITCOIN_JSON_URL;
 
     private static final RestTemplate rest = new RestTemplate();
     private static final Gson gson = new Gson();
 
+    static {
+        Properties prop = new Properties();
+        String nbu = null;
+        String bitok = null;
+        try (InputStream input = new FileInputStream("src\\main\\resources\\application.properties")) {
+            // load a properties file
+            prop.load(input);
+            // get nbu and bitcoin urls
+            nbu = prop.getProperty("nbuJsonUrl");
+            bitok = prop.getProperty("bitcoinJsonUrl");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        NBU_CURRENCIES_JSON_URL = nbu;
+        COINDESK_BITCOIN_JSON_URL = bitok;
+    }
+
     //NBU request sender
-    static String sendNbuRequest() {
+    private static String sendNbuRequest() {
         return rest.getForObject(URI.create(NBU_CURRENCIES_JSON_URL), String.class);
     }
 
     //BLOCKCHAIN request sender
-    static String sendBlockchainRequest() {
+    private static String sendBlockchainRequest() {
         return rest.getForObject(URI.create(COINDESK_BITCOIN_JSON_URL), String.class);
     }
 

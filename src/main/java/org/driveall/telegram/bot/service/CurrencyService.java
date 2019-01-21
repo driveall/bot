@@ -7,9 +7,6 @@ import org.driveall.telegram.bot.jsonEntity.Blockchain;
 import org.driveall.telegram.bot.jsonEntity.Nbu;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,21 +21,9 @@ class CurrencyService {
     private static final Gson gson = new Gson();
 
     static {
-        Properties prop = new Properties();
-        String nbu = null;
-        String bitok = null;
-        try (InputStream input = new FileInputStream("src\\main\\resources\\application.properties")) {
-            // load a properties file
-            prop.load(input);
-            // get nbu and bitcoin urls
-            nbu = prop.getProperty("nbuJsonUrl");
-            bitok = prop.getProperty("bitcoinJsonUrl");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        NBU_CURRENCIES_JSON_URL = nbu;
-        COINDESK_BITCOIN_JSON_URL = bitok;
+        Properties prop = PropertyService.getProps();
+        NBU_CURRENCIES_JSON_URL = prop.getProperty("nbuJsonUrl");
+        COINDESK_BITCOIN_JSON_URL = prop.getProperty("bitcoinJsonUrl");
     }
 
     //NBU request sender

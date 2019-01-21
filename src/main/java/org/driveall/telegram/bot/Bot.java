@@ -4,6 +4,7 @@ import org.driveall.telegram.bot.processor.Processor;
 import org.driveall.telegram.bot.service.BotService;
 import org.driveall.telegram.bot.service.LogService;
 import org.driveall.telegram.bot.service.MessageService;
+import org.driveall.telegram.bot.service.PropertyService;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -12,9 +13,6 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Properties;
 
@@ -23,21 +21,9 @@ public class Bot extends TelegramLongPollingBot {
     public static final String BOT_USERNAME;
 
     static {
-        Properties prop = new Properties();
-        String token = null;
-        String name = null;
-        try (InputStream input = new FileInputStream("src\\main\\resources\\application.properties")) {
-            // load a properties file
-            prop.load(input);
-            // get nbu and bitcoin urls
-            token = prop.getProperty("botToken");
-            name = prop.getProperty("botUsername");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        BOT_TOKEN = token;
-        BOT_USERNAME = name;
+        Properties prop = PropertyService.getProps();
+        BOT_TOKEN = prop.getProperty("botToken");
+        BOT_USERNAME = prop.getProperty("botUsername");
     }
 
     public static void main(String[] args) {
